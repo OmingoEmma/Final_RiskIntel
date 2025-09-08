@@ -1,0 +1,2 @@
+title,text,cleaned_text,sentiment_score,entities,country,date,gdp,cpi,unemployment,risk_score,predicted_risk
+Kenya inflation update,Kenya faces rising inflation <b>amid</b> new fuel subsidies and global instability.,kenya face rising inflation amid new fuel subsidy global instability,0.0681818181818181,"[('kenya', 'GPE')]",Kenya,2024-01-01,110.2,6.5,5.7,-19.156013119716043,-19.15601311971608

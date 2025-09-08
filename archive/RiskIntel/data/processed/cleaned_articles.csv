@@ -1,0 +1,4 @@
+title,text,cleaned_text,sentiment_score,entities
+Kenya inflation update,Kenya faces rising inflation <b>amid</b> new fuel subsidies and global instability.,kenya face rising inflation amid new fuel subsidy global instability,0.06818181818181818,"[('kenya', 'GPE')]"
+UK economy,Experts say the UK may avoid recession. GDP growth is steady.,expert say uk may avoid recession gdp growth steady,0.16666666666666666,"[('uk', 'GPE')]"
+Empty article,,,0.0,[]

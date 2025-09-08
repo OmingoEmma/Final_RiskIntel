@@ -9,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 import joblib
 
-from explainability.shap_utils import (
+from src.explainability.shap_utils import (
    get_shap_explanation,
    generate_and_save_shap_reports,
 )
