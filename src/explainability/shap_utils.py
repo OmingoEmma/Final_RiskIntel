@@ -16,6 +16,7 @@ import shap
 
 
 def _ensure_directory(path: str) -> None:
+   """Create directory if it doesn't exist, raising on error."""
    try:
       os.makedirs(path, exist_ok=True)
    except Exception as exc:
@@ -23,6 +24,7 @@ def _ensure_directory(path: str) -> None:
 
 
 def _now_stamp() -> str:
+   """Return a timestamp for artifact filenames."""
    return datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
@@ -31,8 +33,7 @@ def get_shap_explanation(
    X: Union[pd.DataFrame, np.ndarray],
    feature_names: Optional[List[str]] = None,
 ) -> Dict[str, Union[np.ndarray, float, List[str]]]:
-   """
-   Compute SHAP values using TreeExplainer for a tree-based model.
+   """Compute SHAP values using TreeExplainer for a tree-based model.
 
    Returns a dict with keys: shap_values (ndarray), expected_value (float), feature_names (list[str]).
    """
@@ -77,8 +78,7 @@ def generate_and_save_shap_reports(
    instance_index: int = 0,
    max_display: int = 10,
 ) -> Dict[str, str]:
-   """
-   Generate global and local SHAP reports and save as PNG and HTML.
+   """Generate global and local SHAP reports and save as PNG and HTML.
 
    Returns a dict of artifact file paths.
    """

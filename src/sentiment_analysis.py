@@ -12,6 +12,10 @@ _FINBERT_TOKENIZER: Any = None
 
 
 def is_gpu_available() -> bool:
+   """Return True if a CUDA GPU is available for acceleration.
+
+   This is used to select the device for the FinBERT pipeline.
+   """
    try:
       import torch  # type: ignore
       return bool(getattr(torch.cuda, "is_available", lambda: False)())
@@ -22,7 +26,8 @@ def is_gpu_available() -> bool:
 def _load_finbert_pipeline() -> Tuple[Any, Any]:
    """Load and cache the FinBERT pipeline and tokenizer.
 
-   Returns a tuple of (pipeline, tokenizer).
+   Returns:
+      A tuple of (pipeline, tokenizer).
    """
    global _FINBERT_PIPELINE, _FINBERT_TOKENIZER
    if _FINBERT_PIPELINE is not None and _FINBERT_TOKENIZER is not None:
@@ -66,6 +71,12 @@ _RE_CASHTAG = re.compile(r"\$([A-Za-z]{1,10})")
 
 
 def _preprocess_text(text: Optional[str]) -> str:
+   """Normalize text for robust sentiment analysis.
+
+   - strips HTML and URLs
+   - normalizes whitespace
+   - lowercases and normalizes cashtags ($TSLA -> TSLA)
+   """
    if text is None:
       return ""
    if not isinstance(text, str):
@@ -114,6 +125,7 @@ def _chunk_text_by_tokens(text: str, tokenizer: Any, max_tokens: int = 450) -> L
 
 
 def _scores_to_polarity(prob_by_label: Dict[str, float]) -> float:
+   """Convert class probabilities to a polarity score in [-1, 1]."""
    p_pos = float(prob_by_label.get("positive", 0.0))
    p_neg = float(prob_by_label.get("negative", 0.0))
    polarity = p_pos - p_neg
@@ -122,6 +134,7 @@ def _scores_to_polarity(prob_by_label: Dict[str, float]) -> float:
 
 
 def _aggregate_chunk_scores(chunk_outputs: List[List[Dict[str, float]]]) -> Dict[str, float]:
+   """Average per-chunk probabilities into a single probability distribution."""
    # Average probabilities across chunks
    sums: Dict[str, float] = {"positive": 0.0, "negative": 0.0, "neutral": 0.0}
    count = 0
@@ -141,6 +154,7 @@ def _aggregate_chunk_scores(chunk_outputs: List[List[Dict[str, float]]]) -> Dict
 
 
 def _analyze_with_finbert(texts: List[str]) -> List[Dict[str, Any]]:
+   """Analyze texts using FinBERT and return rich outputs per text."""
    pipeline, tokenizer = _load_finbert_pipeline()
    results: List[Dict[str, Any]] = []
    # Preprocess and chunk
@@ -175,6 +189,7 @@ def _analyze_with_finbert(texts: List[str]) -> List[Dict[str, Any]]:
 
 
 def _analyze_with_comprehend(texts: List[str]) -> List[Dict[str, Any]]:
+   """Fallback sentiment analysis using AWS Comprehend batch API."""
    try:
       import boto3  # type: ignore
    except Exception as exc:  # pragma: no cover - import failure path
@@ -231,7 +246,7 @@ def _analyze_with_comprehend(texts: List[str]) -> List[Dict[str, Any]]:
 
 
 def analyze_sentiment(text: Optional[str]) -> Dict[str, Any]:
-   """Analyze a single text with FinBERT and include confidence and probabilities.
+   """Analyze a single text with FinBERT and include probabilities.
 
    Returns a dict with keys: label, score (polarity in [-1,1]), confidence, probabilities.
    """
@@ -249,6 +264,7 @@ def analyze_sentiment(text: Optional[str]) -> Dict[str, Any]:
 
 
 def analyze_sentiments(texts: List[Optional[str]]) -> List[Dict[str, Any]]:
+   """Batch version of analyze_sentiment for multiple inputs."""
    if not texts:
       return []
    try:

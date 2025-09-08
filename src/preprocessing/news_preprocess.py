@@ -152,6 +152,12 @@ def process_new_raw_files(raw_dir: str = os.path.join("data", "raw"), processed_
          merged[col] = 0.0 if col != "date" else pd.NaT
    merged = merged[columns]
 
+   # Ensure parent directory for custom processed_path exists
+   try:
+      os.makedirs(os.path.dirname(processed_path), exist_ok=True)
+   except Exception:
+      pass
+
    merged.to_csv(processed_path, index=False)
 
 
